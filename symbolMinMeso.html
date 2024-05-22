@@ -1,0 +1,204 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <div>
+        <span>
+            <span style="font-size: 12pt;">목표 포스:</span>
+            <input style="width: 60px; border-radius: 6px;" type="number" id="needForce" placeholder="목표 포스" value="900">
+        </span>
+        <span>
+            <span style="font-size: 12pt;">길드 포스:</span>
+            <input style="width: 30px; border-radius: 6px;" type="number" id="guildForce" placeholder="길드 포스" value="30">
+        </span>
+        <span style="font-size: 12pt;">
+            <span>하이퍼 스탯 포스:</span>
+            <input style="width: 30px; border-radius: 6px;" type="number" id="hyperForce" placeholder="하이퍼 스탯 포스" value="80">
+        </span>
+    </div>
+    <br/>
+    <div>
+        <div>
+            <span>소멸의여로 최대 제한 레벨: </span>
+            <input style="width: 60px; border-radius: 6px;" type="number" id="maxForce1" placeholder="레벨" value="20">
+        </div>
+        <div>
+            <span>츄츄아일랜드 최대 제한 레벨: </span>
+            <input style="width: 60px; border-radius: 6px;" type="number" id="maxForce2" placeholder="레벨" value="20">
+        </div>
+        <div>
+            <span>레헬른 최대 제한 레벨: </span>
+            <input style="width: 60px; border-radius: 6px;" type="number" id="maxForce3" placeholder="레벨" value="20">
+        </div>
+        <div>
+            <span>아르카나 최대 제한 레벨: </span>
+            <input style="width: 60px; border-radius: 6px;" type="number" id="maxForce4" placeholder="레벨" value="20">
+        </div>
+        <div>
+            <span>모라스 최대 제한 레벨: </span>
+            <input style="width: 60px; border-radius: 6px;" type="number" id="maxForce5" placeholder="레벨" value="20">
+        </div>
+        <div>
+            <span>에스페라 최대 제한 레벨: </span>
+            <input style="width: 60px; border-radius: 6px;" type="number" id="maxForce6" placeholder="레벨" value="20">
+        </div>
+    </div>
+    <br/>
+    <div>
+        <button id="calc" style="width: 60px; height: 34px; background-color: black; border-radius: 8px; color: white; cursor: pointer;">계산</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        const needCounts = [0, 12, 15, 20, 27, 36, 47, 60, 75, 92, 111, 132, 155, 180, 207, 236, 367, 300, 335, 372]
+        const symbols = [
+            {
+                'title': '소멸의여로',
+                'maxLevelKey': 'maxForce1',
+                'mesoForLevelUpList': [
+                    0, 970000, 1230000, 1660000, 2260000, 3060000, 4040000, 5220000, 6600000, 8180000, 
+                    9900000, 12010000, 14260000, 16740000, 19450000, 22420000, 25630000, 29100000, 32830000, 36820000
+                ]
+            },
+            {
+                'title': '츄츄아일랜드',
+                'maxLevelKey': 'maxForce2',
+                'mesoForLevelUpList': [
+                    0, 1210000, 1530000, 2060000, 2800000, 3780000, 4980000, 6420000, 8100000, 10200000, 
+                    12210000, 14650000, 17360000, 20340000, 23590000, 27140000, 30970000, 35100000, 39530000, 44260000
+                ]
+            },
+            {
+                'title': '레헬른',
+                'maxLevelKey': 'maxForce3',
+                'mesoForLevelUpList': [
+                    0, 1450000, 1830000, 2460000, 3340000, 4500000, 5920000, 7620000, 9600000, 11860000, 
+                    14430000, 17290000, 20460000, 23940000, 27730000, 31860000, 36310000, 41100000, 46230000, 51700000
+                ]
+            },
+            {
+                'title': '아르카나',
+                'maxLevelKey': 'maxForce4',
+                'mesoForLevelUpList': [
+                    0, 1690000, 2130000, 2860000, 3880000, 5220000, 6860000, 8820000, 11100000, 13700000, 
+                    16650000, 19930000, 23560000, 27540000, 31870000, 36580000, 41650000, 47100000, 52930000, 59140000
+                ]
+            },
+            {
+                'title': '모라스',
+                'maxLevelKey': 'maxForce5',
+                'mesoForLevelUpList': [
+                    0, 1930000, 2430000, 3260000, 4420000, 5940000, 7800000, 10200000, 12600000, 15540000, 
+                    18870000, 22570000, 26600000, 31140000, 36010000, 41300000, 46990000, 53100000, 59630000, 66580000
+                ]
+            },
+            {
+                'title': '에스페라',
+                'maxLevelKey': 'maxForce6',
+                'mesoForLevelUpList': [
+                    0, 2170000, 2730000, 3600000, 4960000, 6600000, 8740000, 11200000, 14100000, 17300000, 
+                    21900000, 25210000, 29760000, 34740000, 40150000, 46020000, 52330000, 59100000, 66330000, 74020000
+                ]
+            }
+        ]
+
+        function calcSymbols() {
+            let needForce = document.getElementById('needForce').value;
+            let guildForce = document.getElementById('guildForce').value;
+            let hyperForce = document.getElementById('hyperForce').value;
+            if (needForce == undefined || needForce == '' || isNaN(parseInt(needForce))) {
+                alert('목표 포스를 입력해세요.');
+                return;
+            }
+            if (guildForce != undefined || guildForce != '' || !isNaN(parseInt(guildForce))) {
+                if (guildForce < 0) {
+                    alert('길드 포스는 -값이 될수 없습니다.');
+                    return;
+                }
+                needForce -= guildForce;
+            }
+            if (hyperForce != undefined || hyperForce != '' || !isNaN(parseInt(hyperForce))) {
+                if (hyperForce < 0) {
+                    alert('하이퍼 포스는 -값이 될수 없습니다.');
+                    return;
+                }
+                needForce -= hyperForce;
+            }
+            let maxForce = symbols.reduce(function(acc, cur, index) {  return acc + (cur['mesoForLevelUpList'].length * 10 + 20); }, 0);
+            if (needForce > maxForce) {
+                alert('목표 포스는 달성할수 없습니다.');
+                return;
+            }
+            let symbolList = symbols.map(function(list, idx) { 
+                return {'title': list['title'], 'level': 0, 'force': 0, 'needCount': 0, 'meso': 0};
+            });
+
+            while(symbolList.reduce(function(acc, cur, index) {  return acc + cur['force']; }, 0) < needForce) {
+                const chip = symbols.map(function(list, idx) {
+                    let symbol = symbolList[idx];
+                    let symbolLevel = symbol['level'];
+                    let mesoForLevelUpList = list['mesoForLevelUpList'];
+                    let maxLevelKey = list['maxLevelKey']
+                    let maxLevel = document.getElementById(maxLevelKey).value;
+                    if (maxLevel == undefined || maxLevel == '') {
+                        maxLevel = 0;
+                    }
+                    if (isNaN(parseInt(maxLevel))) {
+                        maxLevel = 0;
+                    }
+                    if (symbolLevel >= maxLevel) {
+                        return undefined;
+                    } else {
+                        let mesoForLevelUp = mesoForLevelUpList[symbolLevel];
+                        return {'symbol': symbol, 'meso': mesoForLevelUp };
+                    }
+                }).sort(function(lhs, rhs) { 
+                    return lhs['meso'] - rhs['meso'];
+                })[0];
+
+                if (chip == undefined) {
+                    alert('계산할수 없습니다.');
+                    return undefined;
+                }
+                const symbol = chip['symbol'];
+                symbol['meso'] += chip['meso'];
+                symbol['needCount'] += needCounts[symbol['level']];
+                symbol['level'] += 1;
+                if (symbol['force'] == 0) {
+                    symbol['force'] = 20;
+                }
+                symbol['force'] += 10;
+            }
+            return symbolList;  
+        }
+
+        function makeHTML(symbol) {
+            let needCount = symbol['needCount'];
+            let dosilakCount = Math.ceil(needCount / 4 * 5);
+            let dayCount = Math.ceil(dosilakCount / 20);
+            let result = '';
+            result += `<b>${symbol['title']}</b>`;
+            result += '<ui>';
+            result += `<li>심볼 레벨: ${symbol['level']}</li>`;
+            result += `<li>레벨업 총 갯수: ${needCount} 개</li>`;
+            result += `<li>도시락으로 만들기 전 갯수: ${dosilakCount} 개</li>`;
+            result += `<li>${dayCount}일 필요</li>`;
+            result += `<li>총 ${symbol['meso'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}메소 필요</li>`;
+            result += '</ui>';
+            return result;
+        }
+
+        function update() {
+            const symbols = calcSymbols();
+            if (symbols == undefined) { return; }
+            const result = symbols.map(function(symbol) { return makeHTML(symbol) }).reduce(function(acc, cur) { return acc + cur + '</br>' }, '<br/>')
+            document.getElementById('result').innerHTML = result;
+        }
+
+        document.getElementById('calc').addEventListener('click', function(e) {   
+            update()
+        });
+
+        update()
+    </script>
+</html>
