@@ -196,9 +196,41 @@
             document.getElementById('result').innerHTML = result;
         }
 
-        document.getElementById('calc').addEventListener('click', function(e) {   
+        document.getElementById('calc').addEventListener('click', function(e) {
+            const data = {
+                'needForce': document.getElementById('needForce').value,
+                'guildForce': document.getElementById('guildForce').value,
+                'hyperForce': document.getElementById('hyperForce').value,
+                'maxForce1': document.getElementById('maxForce1').value,
+                'maxForce2': document.getElementById('maxForce2').value,
+                'maxForce3': document.getElementById('maxForce3').value,
+                'maxForce4': document.getElementById('maxForce4').value,
+                'maxForce5': document.getElementById('maxForce5').value,
+                'maxForce6': document.getElementById('maxForce6').value,
+            };
+            localStorage.setItem('maple_user_data', JSON.stringify(data));
             update()
         });
+
+        if (localStorage.getItem('maple_user_data') != undefined && localStorage.getItem('maple_user_data') != null && localStorage.getItem('maple_user_data') != '') {
+            const data = JSON.parse(localStorage.getItem('maple_user_data'));
+            if (data != undefined && data != null) {
+                function loadItem(key) {
+                    if (data[key] != undefined && data[key] != null && data[key] != '') {
+                        document.getElementById(key).value = data[key];
+                    }
+                }
+                loadItem('needForce');
+                loadItem('guildForce');
+                loadItem('hyperForce');
+                loadItem('maxForce1');
+                loadItem('maxForce2');
+                loadItem('maxForce3');
+                loadItem('maxForce4');
+                loadItem('maxForce5');
+                loadItem('maxForce6');
+            }
+        }
 
         update()
     </script>
